@@ -34,6 +34,16 @@ def index():
     """Show introduction screen"""
     return render_template("index.html")
 
+@app.route("/start", methods=['GET', 'POST'])
+def start():
+    """Show start of application screen"""
+    if request.method == 'POST':
+        url = request.form.get('url')
+        print(url)
+        return render_template('start.html')
+    else:
+        return render_template('start.html')    
+
 
 if __name__ == '__main__':
     app.run()
