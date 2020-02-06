@@ -1,0 +1,263 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <title>Almanac Dashboard</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.1/examples/dashboard/">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>   
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+    <!-- JS Cookie -->
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@beta/dist/js.cookie.min.js"></script>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="{{url_for('static', filename='img/chart.png')}}">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" />
+
+    <!-- Custom styles and script for this template -->
+    <link href="{{url_for('static', filename='css/styles.css')}}" rel="stylesheet">
+    <script src="{{url_for('static', filename='js/shared.js')}}"></script>
+
+    <!-- Feather icons -->
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script>
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+      <a class="navbar-brand col-sm-3 col-md-2 mr-0" href="/">Welcome</a>
+      <ul id="navMetrics" class="nav nav-expand mb-2" style="margin-top: 2px; padding-top:0; display:none;">
+        <li class="nav-item">
+          <a class="nav-link alert-link" href="/economy" data-toggle="tooltip" data-placement="bottom" title="This entry records the difference between national government revenues and expenditures from the ONS BoP Current Account Balance SA. A positive (+) number indicates that revenues exceeded expenditures (a budget surplus), while a negative (-) number indicates the reverse (a budget deficit or net borrowing).">
+            <span data-feather="dollar-sign" style="color: white"></span>
+            <span class="economyMetric" style="color: white"></span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link alert-link" href="/population" data-toggle="tooltip" data-placement="bottom" title="This shows the total population of the UK according to World Bank estimates" style="color: white">
+            <span data-feather="users" style="color: white"></span>
+            <span class="populationMetric" style="color: white">...</span>
+          </a>
+        </li>
+        <li class="nav-item alert-link">
+          <a class="nav-link" href="/politics" style="color: white">
+            <span data-feather="smile" style="color: white"></span>
+            <span class="approvalMetric" data-toggle="tooltip" data-placement="bottom" title="This shows the current Prime Minister's approval rating from YouGov" style="color: white">...</span>
+          </a>
+        </li>
+      </ul>
+      <ul class="navbar-nav px-3">
+        <li class="nav-item alert-link text-nowrap">
+          <a class="nav-link" href="#" data-toggle="modal" data-target="#exampleModalCenter">
+            <span data-feather="help-circle" style="color: white"></span>
+            <span style="color: white">Help</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+          <div class="sidebar-sticky">
+            <ul class="nav flex-column">
+              <li class="nav-item">
+                {% if marker == 'home' %}
+                <a class="nav-link active" href="/">
+                {% else %}
+                <a class="nav-link" href="/">
+                {% endif %}
+                  <span data-feather="home"></span>
+                  Dashboard <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                {% if marker == 'population' %}
+                <a class="nav-link active" href="/population">
+                {% else %}
+                <a class="nav-link" href="/population">
+                {% endif %}
+                  <span data-feather="users"></span>
+                  Population
+                </a>
+              <li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="shopping-cart"></span>
+                  Economy
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://www.gov.uk/government/ministers" target="_blank">
+                  <span data-feather="thumbs-up"></span>
+                  Politics
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="file-text"></span>
+                  Laws
+                </a>
+              </li>
+              <li class="nav-item">
+                {% if marker == 'map' %}
+                <a class="nav-link active" href="/map">
+                {% else %}
+                <a class="nav-link" href="/map">
+                {% endif %}
+                  <span data-feather="map"></span>
+                  Map
+                </a>
+              </li>
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Happiness</span>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="shield"></span>
+                  Crime Safety
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="target"></span>
+                  Defence
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="book"></span>
+                  Education
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="zap"></span>
+                  Energy
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="cloud"></span>
+                  Environment
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="heart"></span>
+                  Healthcare
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="home"></span>
+                  Housing
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="briefcase"></span>
+                  Job
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">
+                  <span data-feather="truck"></span>
+                  Transport
+                </a>
+              </li>
+            </ul>
+
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>References</span>
+            </h6>
+            <ul class="nav flex-column mb-2">
+              <li class="nav-item">
+                <a class="nav-link" href="/sources">
+                  <span data-feather="database"></span>
+                  Data
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/tools">
+                  <span data-feather="tool"></span>
+                  Tools
+                </a>
+              </li>
+            </ul>
+          </div>
+		</nav>
+
+		<!-- Modal -->
+		<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLongTitle">Welcome to the UK Almanac!</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+        Congratulations on your election win, Prime Minister! Although now comes the hard part of actually running the place... 
+        Not to fear! Your trusty advisor has put together an almanac of information on our beloved country to bring you up to speed.
+        <br><br>
+        Numbers are very important. For example, we need to know how much we're spending, predict healthcare demand, 
+        and measure educational outcomes. In general, use analysis to make better evidence-based decisions.
+        <br><br>
+        I'm sure we will be improving things in no time, and the citizens will love us for it! Our very own island of paradise! So much to 
+        do and such little time... the next election will be here in no time and we need those approval ratings high.
+        <br><br>
+        The information comes from only the finest sources including:
+        <ul>
+          <li>Census Data</li>
+          <li>CIA World Factbook</li>
+          <li>GOV.UK</li>
+          <li>ONS</li>
+          <li>World Bank</li>
+          <li><a href="/sources" class="alert-link">Many more...</a></li>
+        </ul>
+        This is a work in progress so please don't fire me if a page isn't there yet... It will be eventually!
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal">Got it</button>
+			</div>
+			</div>
+		</div>
+		</div>
+		
+		{% block main %}{% endblock %}
+
+  </body>
+  <script>
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+
+  	$(function () {
+	  	$('[data-toggle="popover"]').popover()
+    })
+    
+    $('.helpIcon').click(function() {
+      stopPropagation();
+    });
+  </script>
+</html>

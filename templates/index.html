@@ -1,0 +1,134 @@
+{% extends "layout.html" %}
+
+{% block main %}
+
+	<main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
+		<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+		<h1 class="h2">Home</h1>
+		<div class="btn-toolbar mb-2 mb-md-0">
+			<div class="btn-group mr-2">
+			<a href="https://gisanddata.maps.arcgis.com/apps/opsdashboard/index.html#/bda7594740fd40299423467b48e9ecf6" target="_blank" id="btnCoronaVirus" class="btn btn-sm btn-outline-danger">Corona Virus</a>
+			<button id="btnDailyBriefing" class="btn btn-sm btn-outline-secondary">Daily Briefing</button>
+			<button id="btnCountryProfile" class="btn btn-sm btn-outline-secondary">Country Profile</button>
+			</div>
+		</div>
+		</div>
+
+		<div id="todayInHistoryBanner" class="alert alert-info" role="alert">
+			...
+		</div>
+
+		<div class="tenThingsSection">
+			<h3>Daily Briefing</h3>
+			<b>TEN THINGS YOU NEED TO KNOW TODAY</b> by <a href="https://www.theweek.co.uk/daily-briefing" target="_blank">The Week</a>
+			{{ newsHtml | safe }}
+		</div>
+		
+		<div class="backgroundSection" style="display: none">
+			<h3>Profile</h3>
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+			<p id="backgroundText"></p>
+
+			<h3>Trade</h3>
+			<div class="spinner-border" role="status">
+				<span class="sr-only">Loading...</span>
+			</div>
+			<p id="economyText"></p>
+			<source>Source: <a href="https://www.cia.gov/library/publications/the-world-factbook/" target="_blank">CIA World Factbook</a></source>
+		</div>
+
+	</main>
+	</div>
+
+	</div>
+
+	<!-- Bootstrap core JavaScript
+	================================================== -->
+	<!-- Placed at the end of the document so the pages load faster -->
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+	<!-- Icons -->
+	<script>
+		feather.replace()
+	</script>
+
+	<script>
+
+		// Get LATEST WORLD FACTBOOK
+		$.ajax({
+			type:"GET",
+			url:"https://raw.githubusercontent.com/iancoleman/cia_world_factbook_api/master/data/factbook.json",
+			async:false,
+			dataType: "json",
+			success: function(data) {
+				console.log("CIA World Factbook finished loading... " + Object.keys(data.countries).length + " entries");
+				$('.spinner-border').css('display', 'none');
+				$("#backgroundText").html(data.countries.united_kingdom.data.introduction['background']);
+				$("#economyText").html(data.countries.united_kingdom.data.economy['overview'])
+				console.log(data.countries.united_kingdom.data);
+			},
+			error: function(errorMessage){
+				console.error("World Factbook API is not responding...")
+			}
+		});
+
+		function getRandomHistoryFact() {
+			$.ajax({
+				type:"GET",
+				url:"https://history.muffinlabs.com/date",
+				dataType: 'JSONP',
+				data: {
+					format: "json"
+				},
+				jsonpCallback: 'callbackFnc',
+				async: false,
+				global: false,
+				crossDomain: true,
+				success: function(data) {
+					var arrayLength = data.data.Events.length - 1;
+
+					// Wipe previous search results
+					$("#todayInHistoryBanner").fadeOut(500, function() {
+						// API results
+						var randomIndex = Math.floor(Math.random() * (arrayLength - 0 + 1)) + 0;
+						var newItem = data.data.Events[randomIndex];
+
+						// Update DOM with new item
+						$('#todayInHistoryBanner').html(data.date + ' ' + newItem.html);
+						$('#todayInHistoryBanner a').attr('target', '_blank').addClass("alert-link");
+
+					});
+					
+					$("#todayInHistoryBanner").fadeIn(500);
+				},
+				error: function(errorMessage){
+					console.error("Today in History API is not responding...")
+				}
+			});
+		}
+
+		// set timeout for new item
+		getRandomHistoryFact();
+		setInterval(function(){
+			getRandomHistoryFact();
+		}, 15000);
+
+		// add open in a new tab to links
+		$('.field-collection-view a').attr('target', '_blank');
+
+		// toggle buttons
+		$('#btnDailyBriefing').click(function() {
+			$('.backgroundSection').fadeOut(500);
+			$('.tenThingsSection').fadeIn(500);
+		});
+
+		$('#btnCountryProfile').click(function() {
+			$('.tenThingsSection').fadeOut(500);
+			$('.backgroundSection').fadeIn(500);
+		});
+
+	</script>
+
+{% endblock %}
