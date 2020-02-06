@@ -39,8 +39,9 @@ def start():
     """Show start of application screen"""
     if request.method == 'POST':
         url = request.form.get('url')
-        print(url)
-        return render_template('start.html')
+        text = scraper.getJobDescription(url)
+        print(text)
+        return render_template('start.html', text=text)
     else:
         return render_template('start.html')    
 
