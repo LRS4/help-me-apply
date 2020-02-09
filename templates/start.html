@@ -5,11 +5,66 @@
 	<main role="main" class="inner cover">
 		<div class="container">
 			<div class="row">
+				<div class="col-sm" style="min-height: 500px">
+					<nav class="nav nav-pills nav-justified" style="margin-bottom: 20px">
+						<a id='verbsBtn' class="nav-link sub-nav active" href="#">Verbs</a>
+						<a id='adjBtn' class="nav-link sub-nav" href="#">Adjectives</a>
+						<a id='nounsBtn' class="nav-link sub-nav" href="#">Nouns</a>
+					</nav>
+					<div id="verbsDiv">
+						<table id="verbsTable" class="table table-dark">
+							<thead>
+								<tr>
+									<th>Words</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for word in verbs %}
+								<tr>
+									<td>{{ word }}</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					<div id="adjDiv" style="display: none">
+						<table id="adjTable" class="table table-dark">
+							<thead>
+								<tr>
+									<th>Words</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for word in adjectives %}
+								<tr>
+									<td>{{ word }}</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					<div id="nounsDiv" style="display: none">
+						<table id="nounsTable" class="table table-dark">
+							<thead>
+								<tr>
+									<th>Words</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for word in nouns %}
+								<tr>
+									<td>{{ word }}</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+				</div>
 			  <div class="col-sm">
-				One of 2 columns
-			  </div>
-			  <div class="col-sm">
-				One of 2 columns
+				<div class="form-group">
+					<label for="exampleFormControlTextarea1">Paste in your application here</label>
+					<textarea class="form-control" id="answerTextArea" rows="5"></textarea>
+				</div>
 			  </div>
 			</div>
 		  </div>
@@ -19,4 +74,54 @@
 	================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+	<script>
+		$('#verbsTable').DataTable();
+		$('#adjTable').DataTable();
+		$('#nounsTable').DataTable();
+
+		hideAllTables = () => {
+			let tables = ['#verbsDiv', '#adjDiv', '#nounsDiv'];
+			for (let i = 0; i < tables.length; i++) {
+				$(tables[i]).css('display', 'none')
+			}
+		}
+
+		$('#adjBtn').click(function() {
+			hideAllTables();
+			$('#verbsBtn').removeClass('active');
+			$('#nounsBtn').removeClass('active');
+			$(this).addClass('active');
+			$('#adjDiv').css('display', 'block');
+		});
+
+		$('#verbsBtn').click(function() {
+			hideAllTables();
+			$('#adjBtn').removeClass('active');
+			$('#nounsBtn').removeClass('active');
+			$(this).addClass('active');
+			$('#verbsDiv').css('display', 'block');
+		})
+
+		$('#nounsBtn').click(function() {
+			hideAllTables();
+			$('#adjBtn').removeClass('active');
+			$('#verbsBtn').removeClass('active');
+			$(this).addClass('active');
+			$('#nounsDiv').css('display', 'block');
+		})
+
+		// word matching arrays
+		var verbs = [ {% for word in verbs %}'{{ word }}',{% endfor %}]
+		$('#answerTextArea').highlightTextarea({
+			words: [
+				{
+					color: 'blue',
+					words: verbs
+				}
+			]
+		});
+
+
+	</script>
+
 {% endblock %}

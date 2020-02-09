@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import requests, json, time
 from bs4 import BeautifulSoup
-from bs4.element import Comment
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -10,6 +9,13 @@ import os
 from selenium import webdriver  
 from selenium.webdriver.common.keys import Keys  
 from selenium.webdriver.chrome.options import Options
+
+import nltk
+from nltk.tokenize import word_tokenize
+from nltk.tokenize import RegexpTokenizer
+from nltk.corpus import stopwords
+
+from spellchecker import SpellChecker
 
 def getJobDescription(url):
     """
@@ -40,28 +46,56 @@ def getJobDescription(url):
 
     # parse page and remove script tags etc
     [s.extract() for s in soup(['style', 'script', '[document]', 'head', 'title'])]
-    visible_text = (soup.getText()).replace('?', ' ').replace('.', ' ').replace(',', ' ').replace(':', ' ').replace('\n', ' ')
+    text = soup.getText()
 
-    # split text on spaces
-    print(visible_text.split(' '))
+    return text
 
+def getWords(text):
+    """
+    Parses text and returns a list of words using NLTK
+
+    Args:
+        text (string) : The text string that will be parsed for words
+
+    Returns: 
+        verbs, adjectives, adverbs, nouns (lists) : The returned list of words
+    """
+
+    # tokenize text
+    tokens = word_tokenize(text)
+
+    # remove stop words and punctuation
+    stop_words = set(stopwords.words('english'))
+    words = []
+    for w in tokens: 
+        if w.lower() not in stop_words and w.lower().isalpha():
+            words.append(w.lower())
+
+    # remove misspelled words
+    spell = SpellChecker()
+    misspelled = spell.unknown(words=words)
+    words_set = set()
+    for w in words:
+        if w not in misspelled:
+            words_set.add(w)
+
+    # add pos tags
+    pos_words = nltk.pos_tag(words_set)
+
+    # find all verbs, adj and adverbs
+    # https://stackoverflow.com/questions/15388831/what-are-all-possible-pos-tags-of-nltk
+    verbs = set()
+    adjectives = set()
+    nouns = set()
+    adverbs = set()
+    for word, pos_code in pos_words:
+        if pos_code == 'NN':
+            nouns.add(word)
+        elif pos_code in ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']:
+            verbs.add(word)
+        elif pos_code in ['JJ', 'JJR', 'JJS']:
+            adjectives.add(word)
+        elif pos_code in ['RB', 'RBR', 'RBS']:
+            adverbs.add(word)
     
-
-
-    #headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36'}
-    #r = requests.get(url, headers=headers, verify=False, allow_redirects=True)
-    #source = r.text
-    #text = BeautifulSoup(source, 'lxml').get_text
-
-    #rating = soup.find('span', {'class' : 'result'})
-    #rating = rating.findAll('span')
-    #rating = str(rating[-3].contents[0]).strip()
-
-
-# TESTS
-getJobDescription('https://www.monster.co.uk/jobs/l-sheffield,-yorkshire.aspx?jobid=215473959')
-
-#getJobDescription('https://www.civilservicejobs.service.gov.uk/csr/index.cgi?SID=cGFnZWNsYXNzPUpvYnMmb3duZXI9NTA3MDAwMCZzZWFyY2hfc2xpY2VfY3VycmVudD0xJm93bmVydHlwZT1mYWlyJnBhZ2VhY3Rpb249dmlld3ZhY2J5am9ibGlzdCZ1c2Vyc2VhcmNoY29udGV4dD05MzkxMzM0NyZqb2JsaXN0X3ZpZXdfdmFjPTE2NjM0MjEmY3NvdXJjZT1jc3FzZWFyY2gmcmVxc2lnPTE1ODEwMjQxMzQtOTcxMTBmMzA2NDY1ZjRmNDAxNzYwYWFjYTU5YjYxMTc3M2VmNzMwOA==')
-
-#getJobDescription('https://www.monster.co.uk/jobs/l-sheffield,-yorkshire.aspx?jobid=215131987')
-
+    return list(verbs), list(adjectives), list(adverbs), list(nouns) 

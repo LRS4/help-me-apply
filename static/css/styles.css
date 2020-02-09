@@ -105,3 +105,35 @@ body {
 .mastfoot {
   color: rgba(255, 255, 255, .5);
 }
+
+/*
+* DataTables styling
+*/
+
+.dataTables_length label {
+  color: white;
+}
+
+.dataTables_filter label {
+  color: white;
+}
+
+.col-sm td {
+  color: black;
+}
+
+.paginate_button {
+  color: white;
+}
+
+.dataTables_info {
+  color: white !important;
+}
+
+.paginate_button {
+  background-color: #F8F8F8 !important;
+}
+
+.ellipsis {
+  color: white !important;
+}

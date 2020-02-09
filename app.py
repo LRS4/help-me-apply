@@ -40,8 +40,8 @@ def start():
     if request.method == 'POST':
         url = request.form.get('url')
         text = scraper.getJobDescription(url)
-        print(text)
-        return render_template('start.html', text=text)
+        verbs, adjectives, adverbs, nouns =  scraper.getWords(text)
+        return render_template('start.html', verbs=verbs, adjectives=adjectives, adverbs=adverbs, nouns=nouns)
     else:
         return render_template('start.html')    
 
