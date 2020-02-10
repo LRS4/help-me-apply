@@ -39,8 +39,14 @@ def start():
     """Show start of application screen"""
     if request.method == 'POST':
         url = request.form.get('url')
-        text = scraper.getJobDescription(url)
-        verbs, adjectives, adverbs, nouns =  scraper.getWords(text)
+
+        # check if link or text
+        if 'http' in url or 'https' in url:
+            text = scraper.getJobDescription(url)
+            verbs, adjectives, adverbs, nouns =  scraper.getWords(text)
+        else:
+            verbs, adjectives, adverbs, nouns =  scraper.getWords(url)
+            
         return render_template('start.html', verbs=verbs, adjectives=adjectives, adverbs=adverbs, nouns=nouns)
     else:
         return render_template('start.html')    

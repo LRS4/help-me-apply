@@ -5,18 +5,15 @@
 <main role="main" class="inner cover">
     <h1 class="cover-heading">Job application + AI = Success.</h1>
     <p class="lead">
-		To start paste in the URL of a job advert you've seen. Help Me Apply will then let you know how 
-		well your application matches what the job advert is looking for. It might even give you some tips
-		on how you can improve it!
+		Help Me Apply lets you know how well your application matches what a job advert is looking for.
 	</p>
     <form action="/start" method="POST" >
 		<div class="input-group mb-3">
-			<div class="input-group-prepend">
-				<span class="input-group-text" id="basic-addon3">https://example.com/job/</span>
-			</div>
-			<input type="text" class="form-control" id="url" name="url" aria-describedby="basic-addon3">
+			<textarea type="text" rows="3" class="form-control" id="url" name="url" placeholder="Paste the job description text (more accurate) or the link to the page you found it (less accurate)..."></textarea>
 		</div>
-		<button type="submit" class="btn btn-secondary">Go</button>
+		<button type="submit" class="btn btn-outline-light btn-block">Go</button>
+		<br />
+		<a class="btn btn-info">Help</a>
 	</form>
   </main>
 
