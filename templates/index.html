@@ -9,13 +9,47 @@
 	</p>
     <form action="/start" method="POST" >
 		<div class="input-group mb-3">
-			<textarea type="text" rows="3" class="form-control" id="url" name="url" placeholder="Paste the job description text (more accurate) or the link to the page you found it (less accurate)..."></textarea>
+			<textarea type="text" rows="3" class="form-control" id="url" name="url" placeholder="Paste the job description text (faster and more accurate) or the link to the page you found it (slower and less accurate)..." required></textarea>
 		</div>
 		<button type="submit" class="btn btn-outline-light btn-block">Go</button>
 		<br />
-		<a class="btn btn-info">Help</a>
+		<a class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter">Help</a>
 	</form>
+
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title-dark" id="exampleModalLongTitle">Help</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body text-left">
+				<p>
+					To begin you can either paste in the text of the job description you have found on a website... 
+					or you can paste in the link of the page you found it.
+				</p>
+				<p>
+					Pasting in the text will perform much quicker and will produce more accurate results.
+				</p>
+				<p>
+					This is because it will not need to send a request to the web page to get the HTML. It also means that no unnecessary text 
+					will be included.
+				</p>
+				
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">Got it!</button>
+			</div>
+		</div>
+		</div>
+	</div>
+
   </main>
+
+  
 
 	<!-- Bootstrap core JavaScript
 	================================================== -->

@@ -34,6 +34,10 @@ a:hover {
   border: .05rem solid #fff;
 }
 
+.modal-dialog {
+  color: #212529;
+}
+
 
 /*
  * Base structure
@@ -136,4 +140,15 @@ body {
 
 .ellipsis {
   color: white !important;
+}
+
+/*
+* Application checker styles
+*/
+
+.verbStyle {
+  color:white;
+  background-color: green;
+  border-radius: 5px;
+  font-weight: bold;
 }

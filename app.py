@@ -38,18 +38,19 @@ def index():
 def start():
     """Show start of application screen"""
     if request.method == 'POST':
-        url = request.form.get('url')
+        input_field = request.form.get('url')
 
         # check if link or text
-        if 'http' in url or 'https' in url:
-            text = scraper.getJobDescription(url)
-            verbs, adjectives, adverbs, nouns =  scraper.getWords(text)
+        if 'http' in input_field or 'https' in input_field:
+            text = scraper.getJobDescription(input_field)
+            verbs, adjectives, adverbs, nouns = scraper.getWords(text)
         else:
-            verbs, adjectives, adverbs, nouns =  scraper.getWords(url)
-            
-        return render_template('start.html', verbs=verbs, adjectives=adjectives, adverbs=adverbs, nouns=nouns)
+            text = input_field
+            verbs, adjectives, adverbs, nouns = scraper.getWords(text)
+
+        return render_template('start.html', verbs=verbs, adjectives=adjectives, adverbs=adverbs, nouns=nouns, input_text=text)
     else:
-        return render_template('start.html')    
+        return render_template('index.html')    
 
 
 if __name__ == '__main__':

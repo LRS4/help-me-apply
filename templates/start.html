@@ -8,6 +8,7 @@
 				<div class="col-sm">
 					<nav class="nav nav-pills nav-justified" style="margin-bottom: 20px">
 						<a id='verbsBtn' class="nav-link sub-nav active" href="#">Verbs</a>
+						<a id='adverbsBtn' class="nav-link sub-nav" href="#">Adverbs</a>
 						<a id='adjBtn' class="nav-link sub-nav" href="#">Adjectives</a>
 						<a id='nounsBtn' class="nav-link sub-nav" href="#">Nouns</a>
 					</nav>
@@ -20,6 +21,22 @@
 							</thead>
 							<tbody>
 								{% for word in verbs %}
+								<tr>
+									<td>{{ word }}</td>
+								</tr>
+								{% endfor %}
+							</tbody>
+						</table>
+					</div>
+					<div id="adverbsDiv" style="display: none">
+						<table id="adverbsTable" class="table table-dark">
+							<thead>
+								<tr>
+									<th>Words</th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for word in adverbs %}
 								<tr>
 									<td>{{ word }}</td>
 								</tr>
@@ -62,14 +79,26 @@
 				</div>
 			  <div class="col-sm">
 				<nav class="nav nav-pills nav-justified" style="margin-bottom: 20px">
-					<a  class="nav-link sub-nav active" href="#">Application</a>
-					<a  class="nav-link sub-nav" href="#">Metrics</a>
+					<a id="jobDescBtn" class="nav-link sub-nav active" href="#">Scanned Text</a>
+					<a id="applicationBtn" class="nav-link sub-nav" href="#">Enter Application</a>
+					<a id="metricsBtn" class="nav-link sub-nav" href="#">Metrics</a>
+					<a id="resetBtn" class="nav-link sub-nav" href="#">Reset</a>
 				</nav>  
-				<div class="form-group">
-					<label for="exampleFormControlTextarea1">Paste in your application here</label>
-					<textarea class="form-control" id="answerTextArea" rows="5"></textarea>
+				<div id="applicationPasteArea" class="form-group" style="display:none">
+					<textarea class="form-control" id="answerTextArea" rows="20" placeholder="Paste in your application"></textarea>
+					<br />
+					<button id="submitApplication" class="btn btn-outline-light btn-block">Check it!</button>
+				</div>
+				<div id="jobDescription" class="overflow-auto" style="height: 540px; overflow-y: scroll;">
+					...
+				</div>
+				<div id="resultArea" class="overflow-auto" style="height: 540px; overflow-y: scroll; display: none">
+					...
 				</div>
 			  </div>
+			  <textarea id="inputText" hidden>
+				{{ input_text }}
+			  </textarea>
 			</div>
 		  </div>
 	</main>
@@ -79,52 +108,135 @@
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 	<script>
+
+		// create DataTable elements
 		$('#verbsTable').DataTable();
+		$('#adverbsTable').DataTable();
 		$('#adjTable').DataTable();
 		$('#nounsTable').DataTable();
 
+		// function to hide all table divs
 		hideAllTables = () => {
-			let tables = ['#verbsDiv', '#adjDiv', '#nounsDiv'];
+			let tables = ['#verbsDiv', '#adverbsDiv', '#adjDiv', '#nounsDiv'];
 			for (let i = 0; i < tables.length; i++) {
 				$(tables[i]).css('display', 'none')
 			}
 		}
 
+		// function to remove active class 
+		unactiveAllBtnsLeft = () => {
+			let leftBtns = ['#verbsBtn' ,'#adverbsBtn', '#nounsBtn', '#adjBtn'];
+			for (let i = 0; i < leftBtns.length; i++) {
+				$(leftBtns[i]).removeClass('active');
+			}
+		}
+
+		// function to remove active class
+		unactiveAllBtnsRight = () => {
+			let rightBtns = ['#jobDescBtn' ,'#applicationBtn', '#metricsBtn', '#resetBtn'];
+			for (let i = 0; i < rightBtns.length; i++) {
+				$(rightBtns[i]).removeClass('active');
+			}
+		}
+
+		// all button logic
 		$('#adjBtn').click(function() {
 			hideAllTables();
-			$('#verbsBtn').removeClass('active');
-			$('#nounsBtn').removeClass('active');
+			unactiveAllBtnsLeft();
 			$(this).addClass('active');
 			$('#adjDiv').css('display', 'block');
 		});
 
+		// view verbs
 		$('#verbsBtn').click(function() {
 			hideAllTables();
-			$('#adjBtn').removeClass('active');
-			$('#nounsBtn').removeClass('active');
+			unactiveAllBtnsLeft();
 			$(this).addClass('active');
 			$('#verbsDiv').css('display', 'block');
 		})
 
+		// view nouns
 		$('#nounsBtn').click(function() {
 			hideAllTables();
-			$('#adjBtn').removeClass('active');
-			$('#verbsBtn').removeClass('active');
+			unactiveAllBtnsLeft();
 			$(this).addClass('active');
 			$('#nounsDiv').css('display', 'block');
 		})
 
-		// word matching arrays
-		var verbs = [ {% for word in verbs %}'{{ word }}',{% endfor %}]
-		$('answerTextArea').highlightTextarea({
-			words: [
-				{
-					color: 'blue',
-					words: verbs
-				}
-			]
+		// view adverbs
+		$('#adverbsBtn').click(function() {
+			hideAllTables();
+			unactiveAllBtnsLeft();
+			$(this).addClass('active');
+			$('#adverbsDiv').css('display', 'block');
+		})
+
+		// enter your application
+		$('#applicationBtn').click(function() {
+			unactiveAllBtnsRight();
+			$(this).addClass('active');
+			$('#jobDescription').css('display', 'none');
+			$('#applicationPasteArea').css('display', 'block');
 		});
 
+		// view scanned job description
+		$('#jobDescBtn').click(function() {
+			unactiveAllBtnsRight();
+			$(this).addClass('active');
+			$('#applicationPasteArea').css('display', 'none');
+			$('#jobDescription').css('display', 'block');
+			$('#resultArea').css('display', 'none');
+		});
+
+		// word matching arrays
+		var verbs = [ {% for word in verbs %}'{{ word }}',{% endfor %}];
+		var adjectives = [ {% for word in adjectives %}'{{ word }}',{% endfor %}];
+		var nouns = [ {% for word in nouns %}'{{ word }}',{% endfor %}];
+		var input_text = $('#inputText').text().split(' ');
+		
+		var jobDesc = "";
+		for (let i = 0; i < input_text.length; i++) {
+			if (verbs.includes(input_text[i])) {
+				jobDesc += '<span class="verbs verbStyle">' + input_text[i] + '</span>' + ' ';
+			} else if (adjectives.includes(input_text[i])) {
+				jobDesc += '<span class="adjectives adjectiveStyle">' + input_text[i] + '</span>' + ' ';
+			} else if (nouns.includes(input_text[i])) {
+				jobDesc += '<span class="nouns nounsStyle">' + input_text[i] + '</span>' + ' ';
+			} else {
+				jobDesc += input_text[i] + ' ';
+			}
+		}
+		// insert into job description div and show
+		$('#jobDescription').html(jobDesc);
+
+		// enter submitted text into div on click
+		$('#submitApplication').click(function() {
+
+			// get contents 
+			var contents = $('#answerTextArea').val();
+			var words = contents.split(' ')
+
+			// generate html including formatted span elements
+			var myString = "";
+			for (let i = 0; i < words.length; i++) {
+				if (verbs.includes(words[i])) {
+					myString += '<span class="verbs verbStyle">' + words[i] + '</span>' + ' ';
+				} else if (adjectives.includes(words[i])) {
+					myString += '<span class="adjectives adjectiveStyle">' + words[i] + '</span>' + ' ';
+				} else if (nouns.includes(words[i])) {
+					myString += '<span class="nouns nounsStyle">' + words[i] + '</span>' + ' ';
+				} else {
+					myString += words[i] + ' ';
+				}
+			}
+
+			// insert string into div and show
+			$('#resultArea').html(myString).css('display', 'block');
+			$('#goBack').css('display', 'block');
+
+			// hide the text area
+			$('#applicationPasteArea').css('display', 'none');
+		});
 
 	</script>
 
