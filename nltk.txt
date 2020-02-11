@@ -2,5 +2,5 @@ punkt
 stopwords
 RegexpTokenizer
 word_tokenize
-averaged_perceptron_tagger
+perceptron_tagger
 pos_tag
