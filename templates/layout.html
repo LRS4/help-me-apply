@@ -54,11 +54,11 @@
     <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
         <header class="masthead mb-auto">
           <div class="inner">
-            <h3 class="masthead-brand"><a href="/">Help Me Apply</a></h3>
+            <h3 class="masthead-brand"><a href="/">Help Me Apply.</a></h3>
             <nav class="nav nav-masthead justify-content-center">
-              <a class="nav-link active" href="/">Home</a>
-              <a class="nav-link" href="/about">About</a>
-              <a class="nav-link" href="/features">Features</a>
+              <a id="appNav" class="nav-link" href="/">App</a>
+              <a id="aboutNav" class="nav-link" href="/about">About</a>
+              <a id="featuresNav" class="nav-link" href="https://github.com/LRS4/help-me-apply" target="_blank">Code</a>
             </nav>
           </div>
         </header>
@@ -75,6 +75,15 @@
   </body>
 
   <script>
+    var marker = '{{ marker }}';
+    if (marker == 'about') {
+      $('#aboutNav').addClass('active');
+    } else if (marker == 'features') {
+      $('#featuresNav').addClass('active');
+    } else {
+      $('#appNav').addClass('active');
+    }
+
     $(function () {
       $('[data-toggle="tooltip"]').tooltip({
         trigger : 'hover'

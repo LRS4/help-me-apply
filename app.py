@@ -52,6 +52,17 @@ def start():
     else:
         return render_template('index.html')    
 
+@app.route("/about", methods=['GET'])
+def about():
+    """Show the about screen"""
+    marker = 'about'
+    return render_template('about.html', marker=marker)
+
+@app.route("/features", methods=['GET'])
+def features():
+    """Show the features screen"""
+    marker = 'features'
+    return render_template('features.html', marker=marker)    
 
 if __name__ == '__main__':
     app.run()
