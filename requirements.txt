@@ -4,8 +4,7 @@ Flask-Cors==3.0.6
 Flask-Session==0.3.1
 selenium
 beautifulsoup4
-spellchecker
-indexer
+pyspellchecker
 nltk
 lxml
 urllib3
