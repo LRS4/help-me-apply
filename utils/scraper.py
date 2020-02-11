@@ -25,7 +25,7 @@ def getJobDescription(url):
         url (string) : The URL where the job advert is located
 
     Returns: 
-        text (int) : The parsed text of the web page
+        text (string) : The parsed text of the web page
     """
 
     url = url
@@ -36,7 +36,7 @@ def getJobDescription(url):
     options.add_argument('--disable-gpu') 
 
     # initialise webdriver 
-    driver = webdriver.Chrome(r'utils\chromedriver.exe', options=options)
+    driver = webdriver.Chrome(executable_path=str(os.environ.get('CHROMEDRIVER_PATH')), chrome_options=options)
     driver.get(url)
     time.sleep(3)
 
