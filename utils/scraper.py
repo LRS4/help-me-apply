@@ -30,13 +30,18 @@ def getJobDescription(url):
 
     url = url
 
+    # https://medium.com/@mikelcbrowne/running-chromedriver-with-python-selenium-on-heroku-acc1566d161c
+    GOOGLE_CHROME_PATH = '/app/.apt/usr/bin/google_chrome'
+    CHROMEDRIVER_PATH = '/app/.chromedriver/bin/chromedriver'
+
     # set headless option
     options = Options()
     options.add_argument('--headless')
     options.add_argument('--disable-gpu') 
-
+    options.binary_location = GOOGLE_CHROME_PATH
+    
     # initialise webdriver 
-    driver = webdriver.Chrome(executable_path=str(os.environ.get('CHROMEDRIVER_PATH')), chrome_options=options)
+    driver = webdriver.Chrome(executable_path=CHROMEDRIVER_PATH, chrome_options=options)
     driver.get(url)
     time.sleep(3)
 
