@@ -148,7 +148,44 @@ body {
 
 .verbStyle {
   color:white;
-  background-color: green;
+  background-color: #218838;
   border-radius: 5px;
   font-weight: bold;
+}
+
+.verbStyle:hover {
+  background-color: darkgreen;
+}
+
+.adverbStyle {
+  color:white;
+  background-color: #138496;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.adverbStyle:hover {
+  background-color: #0e6c7a;
+}
+
+.adjectiveStyle {
+  color:white;
+  background-color: #FFC107;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.adjectiveStyle:hover {
+  background-color: darkgoldenrod;
+}
+
+.nounStyle {
+  color:white;
+  background-color: #C82333;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.nounStyle:hover {
+  background-color: darkred;
 }

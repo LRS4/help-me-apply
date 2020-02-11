@@ -79,10 +79,8 @@
 				</div>
 			  <div class="col-sm">
 				<nav class="nav nav-pills nav-justified" style="margin-bottom: 20px">
-					<a id="jobDescBtn" class="nav-link sub-nav active" href="#">Scanned Text</a>
+					<a id="jobDescBtn" class="nav-link sub-nav active" href="#" data-toggle="tooltip" title="The job description text that was scanned.">Scanned Text</a>
 					<a id="applicationBtn" class="nav-link sub-nav" href="#">Enter Application</a>
-					<a id="metricsBtn" class="nav-link sub-nav" href="#">Metrics</a>
-					<a id="resetBtn" class="nav-link sub-nav" href="#">Reset</a>
 				</nav>  
 				<div id="applicationPasteArea" class="form-group" style="display:none">
 					<textarea class="form-control" id="answerTextArea" rows="20" placeholder="Paste in your application"></textarea>
@@ -133,19 +131,22 @@
 
 		// function to remove active class
 		unactiveAllBtnsRight = () => {
-			let rightBtns = ['#jobDescBtn' ,'#applicationBtn', '#metricsBtn', '#resetBtn'];
+			let rightBtns = ['#jobDescBtn' ,'#applicationBtn'];
 			for (let i = 0; i < rightBtns.length; i++) {
 				$(rightBtns[i]).removeClass('active');
 			}
 		}
 
+		// function to remove all grammar highlights
+		removeGrammarHighlights = () => {
+			let grammarClasses = ['.verbs', '.adverbs', '.adjectives', '.nouns'];
+			let styleClasses = ['verbStyle', 'adverbStyle', 'adjectiveStyle', 'nounStyle'];
+			for (let i = 0; i < grammarClasses.length; i++) {
+				$(grammarClasses[i]).removeClass(String(styleClasses[i]));
+			}
+		}
+
 		// all button logic
-		$('#adjBtn').click(function() {
-			hideAllTables();
-			unactiveAllBtnsLeft();
-			$(this).addClass('active');
-			$('#adjDiv').css('display', 'block');
-		});
 
 		// view verbs
 		$('#verbsBtn').click(function() {
@@ -153,7 +154,21 @@
 			unactiveAllBtnsLeft();
 			$(this).addClass('active');
 			$('#verbsDiv').css('display', 'block');
+
+			removeGrammarHighlights();
+			$('.verbs').addClass('verbStyle');
 		})
+
+		// view adjectives
+		$('#adjBtn').click(function() {
+			hideAllTables();
+			unactiveAllBtnsLeft();
+			$(this).addClass('active');
+			$('#adjDiv').css('display', 'block');
+
+			removeGrammarHighlights();
+			$('.adjectives').addClass('adjectiveStyle');
+		});
 
 		// view nouns
 		$('#nounsBtn').click(function() {
@@ -161,6 +176,9 @@
 			unactiveAllBtnsLeft();
 			$(this).addClass('active');
 			$('#nounsDiv').css('display', 'block');
+
+			removeGrammarHighlights();
+			$('.nouns').addClass('nounStyle');
 		})
 
 		// view adverbs
@@ -169,12 +187,16 @@
 			unactiveAllBtnsLeft();
 			$(this).addClass('active');
 			$('#adverbsDiv').css('display', 'block');
+
+			removeGrammarHighlights();
+			$('.adverbs').addClass('adverbStyle');
 		})
 
 		// enter your application
 		$('#applicationBtn').click(function() {
 			unactiveAllBtnsRight();
 			$(this).addClass('active');
+			$('#resultArea').css('display', 'none');
 			$('#jobDescription').css('display', 'none');
 			$('#applicationPasteArea').css('display', 'block');
 		});
@@ -190,18 +212,25 @@
 
 		// word matching arrays
 		var verbs = [ {% for word in verbs %}'{{ word }}',{% endfor %}];
+		var adverbs = [ {% for word in adverbs %}'{{ word }}',{% endfor %}];
 		var adjectives = [ {% for word in adjectives %}'{{ word }}',{% endfor %}];
 		var nouns = [ {% for word in nouns %}'{{ word }}',{% endfor %}];
-		var input_text = $('#inputText').text().split(' ');
+
+		// replace new lines and split by spaces
+		var input_text = $('#inputText').text().replace( /\n/g, " " ).split(' ');
 		
 		var jobDesc = "";
 		for (let i = 0; i < input_text.length; i++) {
-			if (verbs.includes(input_text[i])) {
-				jobDesc += '<span class="verbs verbStyle">' + input_text[i] + '</span>' + ' ';
-			} else if (adjectives.includes(input_text[i])) {
-				jobDesc += '<span class="adjectives adjectiveStyle">' + input_text[i] + '</span>' + ' ';
-			} else if (nouns.includes(input_text[i])) {
-				jobDesc += '<span class="nouns nounsStyle">' + input_text[i] + '</span>' + ' ';
+			let word_lower_case = input_text[i].toLowerCase();
+			console.log(word_lower_case)
+			if (verbs.includes(word_lower_case)) {
+				jobDesc += '<a href="https://www.dictionary.com/browse/' + input_text[i] + '?s=t" class="verbs verbStyle" target="_blank">' + input_text[i] + '</a>' + ' ';
+			} else if (adverbs.includes(word_lower_case)) {
+				jobDesc += '<a href="https://www.dictionary.com/browse/' + input_text[i] + '?s=t" class="adverbs adverbStyle" target="_blank">' + input_text[i] + '</a>' + ' ';
+			} else if (adjectives.includes(word_lower_case)) {
+				jobDesc += '<a href="https://www.dictionary.com/browse/' + input_text[i] + '?s=t" class="adjectives adjectiveStyle" target="_blank">' + input_text[i] + '</a>' + ' ';
+			} else if (nouns.includes(word_lower_case)) {
+				jobDesc += '<a href="https://www.dictionary.com/browse/' + input_text[i] + '?s=t" class="nouns nounStyle" target="_blank">' + input_text[i] + '</a>' + ' ';
 			} else {
 				jobDesc += input_text[i] + ' ';
 			}
@@ -214,17 +243,20 @@
 
 			// get contents 
 			var contents = $('#answerTextArea').val();
-			var words = contents.split(' ')
+			var words = contents.replace( /\n/g, " " ).split(' ');
 
 			// generate html including formatted span elements
 			var myString = "";
 			for (let i = 0; i < words.length; i++) {
-				if (verbs.includes(words[i])) {
-					myString += '<span class="verbs verbStyle">' + words[i] + '</span>' + ' ';
-				} else if (adjectives.includes(words[i])) {
-					myString += '<span class="adjectives adjectiveStyle">' + words[i] + '</span>' + ' ';
-				} else if (nouns.includes(words[i])) {
-					myString += '<span class="nouns nounsStyle">' + words[i] + '</span>' + ' ';
+				let word_lower_case = words[i].toLowerCase();
+				if (verbs.includes(word_lower_case)) {
+					myString += '<a href="https://www.dictionary.com/browse/' + words[i] + '?s=t" class="verbs verbStyle" target="_blank">' + words[i] + '</a>' + ' ';
+				} else if (adverbs.includes(word_lower_case)) {
+					myString += '<a href="https://www.dictionary.com/browse/' + words[i] + '?s=t" class="adverbs adverbStyle" target="_blank">' + words[i] + '</a>' + ' ';
+				} else if (adjectives.includes(word_lower_case)) {
+					myString += '<a href="https://www.dictionary.com/browse/' + words[i] + '?s=t" class="adjectives adjectiveStyle" target="_blank">' + words[i] + '</a>' + ' ';
+				} else if (nouns.includes(word_lower_case)) {
+					myString += '<a href="https://www.dictionary.com/browse/' + words[i] + '?s=t" class="nouns nounStyle" target="_blank">' + words[i] + '</a>' + ' ';
 				} else {
 					myString += words[i] + ' ';
 				}
@@ -237,6 +269,9 @@
 			// hide the text area
 			$('#applicationPasteArea').css('display', 'none');
 		});
+
+		removeGrammarHighlights();
+		$('.verbs').addClass('verbStyle');
 
 	</script>
 
