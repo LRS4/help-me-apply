@@ -1,1 +1,4 @@
 punkt
+stopwords
+RegexpTokenizer
+word_tokenize
