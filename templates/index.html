@@ -3,18 +3,22 @@
 {% block main %}
 
 <main role="main" class="inner cover">
-    <h1 class="cover-heading">Job application + AI = Success.</h1>
-    <p class="lead">
-		Help Me Apply lets you know how well your application matches what a job advert is looking for.
-	</p>
-    <form action="/start" method="POST" >
-		<div class="input-group mb-3">
-			<textarea type="text" rows="3" class="form-control" id="url" name="url" placeholder="Paste the job description text (faster and more accurate) or the link to the page you found it (slower and less accurate)..." required></textarea>
-		</div>
-		<button type="submit" class="btn btn-outline-light btn-block">Go</button>
-		<br />
-		<a class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter">Help</a>
-	</form>
+	<div class="intro-cover">
+		<h1 class="cover-heading">Job application + AI = Success.</h1>
+		<p class="lead">
+			Help Me Apply lets you know how well your application matches what a job advert is looking for.
+		</p>
+		<form id="jobDescForm" action="/start" method="POST" >
+			<div class="input-group mb-3">
+				<textarea type="text" rows="3" class="form-control" id="url" name="url" placeholder="Paste the job description text (faster and more accurate) or the link to the page you found it (slower and less accurate)..." required></textarea>
+			</div>
+			<button type="submit" class="btn btn-outline-light btn-block">Go</button>
+			<br />
+			<a class="btn btn-info" data-toggle="modal" data-target="#exampleModalCenter">Help</a>
+		</form>
+	</div>
+
+	<img id="loadingImg" src="{{url_for('static', filename='img/loading.gif')}}" style="display: none;" />
 
 	<!-- Modal -->
 	<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -49,10 +53,18 @@
 
   </main>
 
+
   
 
 	<!-- Bootstrap core JavaScript
 	================================================== -->
 	<!-- Placed at the end of the document so the pages load faster -->
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+	<script>
+		$('#jobDescForm').submit(function() {
+			$('.intro-cover').hide();
+			$('#loadingImg').show();
+		});
+	</script>
 {% endblock %}
