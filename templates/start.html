@@ -81,6 +81,7 @@
 				<nav class="nav nav-pills nav-justified" style="margin-bottom: 20px">
 					<a id="jobDescBtn" class="nav-link sub-nav active" href="#" data-toggle="tooltip" title="The job description text that was scanned.">Scanned Text</a>
 					<a id="applicationBtn" class="nav-link sub-nav" href="#">Enter Application</a>
+					<a id="applicationScore" class="nav-link sub-nav active" data-toggle="tooltip" title="">56%</a>
 				</nav>  
 				<div id="applicationPasteArea" class="form-group" style="display:none">
 					<textarea class="form-control" id="answerTextArea" rows="20" placeholder="Paste in your application"></textarea>
@@ -215,6 +216,7 @@
 		var adverbs = [ {% for word in adverbs %}'{{ word }}',{% endfor %}];
 		var adjectives = [ {% for word in adjectives %}'{{ word }}',{% endfor %}];
 		var nouns = [ {% for word in nouns %}'{{ word }}',{% endfor %}];
+		var allWordsCount = verbs.length + adverbs.length + adjectives.length + nouns.length;
 
 		// replace new lines and split by spaces
 		var input_text = $('#inputText').text().replace( /\n/g, " " ).split(' ');
@@ -222,7 +224,6 @@
 		var jobDesc = "";
 		for (let i = 0; i < input_text.length; i++) {
 			let word_lower_case = input_text[i].toLowerCase();
-			console.log(word_lower_case)
 			if (verbs.includes(word_lower_case)) {
 				jobDesc += '<a href="https://www.dictionary.com/browse/' + input_text[i] + '?s=t" class="verbs verbStyle" target="_blank">' + input_text[i] + '</a>' + ' ';
 			} else if (adverbs.includes(word_lower_case)) {
@@ -238,12 +239,15 @@
 		// insert into job description div and show
 		$('#jobDescription').html(jobDesc);
 
-		// enter submitted text into div on click
+		// enter and highlight submitted text into div on click
 		$('#submitApplication').click(function() {
 
 			// get contents 
 			var contents = $('#answerTextArea').val();
 			var words = contents.replace( /\n/g, " " ).split(' ');
+
+			// generate set in order to count how many words were used from job advert
+			var usedWords = new Set();
 
 			// generate html including formatted span elements
 			var myString = "";
@@ -251,15 +255,43 @@
 				let word_lower_case = words[i].toLowerCase();
 				if (verbs.includes(word_lower_case)) {
 					myString += '<a href="https://www.dictionary.com/browse/' + words[i] + '?s=t" class="verbs verbStyle" target="_blank">' + words[i] + '</a>' + ' ';
+					usedWords.add(words[i]);
 				} else if (adverbs.includes(word_lower_case)) {
 					myString += '<a href="https://www.dictionary.com/browse/' + words[i] + '?s=t" class="adverbs adverbStyle" target="_blank">' + words[i] + '</a>' + ' ';
+					usedWords.add(words[i]);
 				} else if (adjectives.includes(word_lower_case)) {
 					myString += '<a href="https://www.dictionary.com/browse/' + words[i] + '?s=t" class="adjectives adjectiveStyle" target="_blank">' + words[i] + '</a>' + ' ';
+					usedWords.add(words[i]);
 				} else if (nouns.includes(word_lower_case)) {
 					myString += '<a href="https://www.dictionary.com/browse/' + words[i] + '?s=t" class="nouns nounStyle" target="_blank">' + words[i] + '</a>' + ' ';
+					usedWords.add(words[i]);
 				} else {
 					myString += words[i] + ' ';
 				}
+			}
+
+			// perform count of used words
+			var count = 0;
+			usedWords.forEach(function(word) {
+				let word_lower_case = word.toLowerCase();
+				if (verbs.includes(word_lower_case) || adjectives.includes(word_lower_case) || adverbs.includes(word_lower_case) || nouns.includes(word_lower_case)) {
+					count += 1;
+				}
+			});
+			
+			// enter percentage score as used words / total identified words
+			let score = ((count / allWordsCount) * 100).toFixed(0);
+			console.log("Total identified words from job description = " + allWordsCount)
+			console.log("Total words matched from submitted application = " + count)
+			console.log("Final score output (%) = " + score);
+
+			// insert score into html element formatted as red,amber,green
+			if (score > 50) {
+				$('#applicationScore').html('Score: ' + score + '%').css('background-color', '#218838').attr('data-original-title', 'Well done! You used over 50% of the words identified from the job posting.').show();
+			} else if (score < 50 && score > 25 ) {
+				$('#applicationScore').html('Score: ' + score + '%').css('background-color', '#FFC107').attr('data-original-title', 'Great start! You used over 25% of the words identified from the job posting. Try to add even more!').show();
+			} else {
+				$('#applicationScore').html('Score: ' + score + '%').css('background-color', '#C82333').attr('data-original-title', 'You used less than 25% of the words identified from the job posting. You should review the keywords and add more!').show();
 			}
 
 			// insert string into div and show
@@ -269,6 +301,8 @@
 			// hide the text area
 			$('#applicationPasteArea').css('display', 'none');
 		});
+
+		// click score to show breakdown
 
 		removeGrammarHighlights();
 		$('.verbs').addClass('verbStyle');

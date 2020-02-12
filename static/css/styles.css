@@ -189,3 +189,10 @@ body {
 .nounStyle:hover {
   background-color: darkred;
 }
+
+#applicationScore {
+  font-weight: 700;
+  margin-left: 90px;
+  cursor: pointer;
+  display: none;
+}
