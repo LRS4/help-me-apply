@@ -8,7 +8,7 @@ pyspellchecker
 nltk
 lxml
 urllib3
-Jinja2==2.10
+Jinja2==2.11.3
 numpy==1.15.1
 numpydoc==0.8.0
 oauth2client==4.1.3
